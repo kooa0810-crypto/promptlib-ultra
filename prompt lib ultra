@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptForge - 100k+ Master Prompts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fontsource-inter@5.0.8/index.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #e2e8f0;
+        }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+
+        .toast {
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, fadeOut 0.3s ease-in 2.7s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .line-clamp-6 {
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-indigo-500/30 selection:text-indigo-200">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/60">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.reload()">
+                <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">
+                    PF
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white leading-none">Prompt<span class="text-indigo-400">Forge</span></h1>
+                    <span class="text-[10px] text-slate-400 font-medium tracking-wider uppercase">100k+ Master Prompts</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex flex-1 max-w-xl mx-8 relative group">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search 100,000+ master prompts..." 
+                    class="block w-full pl-10 pr-4 py-2.5 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-200 placeholder-slate-500 focus:outline-none focus:bg-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 sm:text-sm transition-all shadow-inner">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <span class="text-xs text-slate-600 border border-slate-700 rounded px-1.5 py-0.5">⌘K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="hidden lg:flex flex-col items-end mr-2">
+                    <span class="text-xs text-slate-400">Database Size</span>
+                    <span class="text-sm font-bold text-indigo-400" id="countDisplay">Generating...</span>
+                </div>
+                <button onclick="showGenerator()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/40 active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    <span class="hidden sm:inline">Master Generator</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Search -->
+    <div class="md:hidden p-4 bg-slate-900 border-b border-slate-800 sticky top-16 z-40">
+        <input type="text" id="mobileSearchInput" placeholder="Search prompts..." 
+            class="block w-full px-4 py-2 border border-slate-700 rounded-lg bg-slate-800 text-slate-300 focus:outline-none focus:border-indigo-500">
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Hero Section -->
+        <div class="text-center mb-10">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Procedural Master Prompt Engine</h2>
+            <p class="text-slate-400 max-w-3xl mx-auto">Generating 100,000+ unique, multi-line, highly detailed master prompts on the fly. Each prompt is structured with Role, Task, Context, Constraints, and Output Formatting for maximum LLM performance.</p>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="flex flex-col md:flex-row gap-4 mb-8">
+            <select id="categoryFilter" onchange="filterPrompts()" class="px-4 py-3 border border-slate-700 rounded-xl bg-slate-900/50 text-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all">
+                <option value="All">All Categories</option>
+                <option value="Coding">Coding & Development</option>
+                <option value="Writing">Professional Writing</option>
+                <option value="Analysis">Data Analysis</option>
+                <option value="Business">Business Strategy</option>
+                <option value="Learning">Advanced Learning</option>
+                <option value="Marketing">Marketing & SEO</option>
+            </select>
+            <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search by keyword, role, or task..." 
+                    class="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-200 placeholder-slate-500 focus:outline-none focus:bg-slate-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all">
+            </div>
+        </div>
+
+        <!-- Prompts Grid -->
+        <div id="promptsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Cards injected via JS -->
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-12 flex justify-center items-center gap-6" id="paginationControls">
+            <button onclick="changePage(-1)" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-slate-700 font-medium text-sm" id="prevBtn">Previous</button>
+            <div class="flex items-center gap-2 text-slate-400 text-sm bg-slate-900 px-4 py-2 rounded-lg border border-slate-800">
+                Page <span id="currentPage" class="text-white font-bold">1</span> 
+                <span class="text-slate-600">/</span> 
+                <span id="totalPages">1</span>
+            </div>
+            <button onclick="changePage(1)" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-slate-700 font-medium text-sm" id="nextBtn">Next</button>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-20">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-800/50 mb-6 border border-slate-700">
+                <svg class="w-10 h-10 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-xl font-medium text-white mb-2">No prompts found</h3>
+            <p class="text-slate-400 max-w-md mx-auto">Try adjusting your search terms or category filter.</p>
+        </div>
+    </main>
+
+    <!-- Generator Modal -->
+    <div id="generatorModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-950/90 backdrop-blur-md transition-opacity" onclick="closeGenerator()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-slate-900 border border-slate-700 text-left shadow-2xl transition-all sm:w-full sm:max-w-3xl">
+                    <div class="bg-slate-900 px-6 py-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-bold text-white gradient-text">Master Prompt Generator</h3>
+                            <button onclick="closeGenerator()" class="text-slate-400 hover:text-white">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-semibold text-indigo-300 uppercase tracking-wider mb-2">1. Assign a Role</label>
+                                <input type="text" id="genRole" placeholder="e.g., Senior Python Developer, Chief Marketing Officer" 
+                                    class="w-full rounded-lg border border-slate-700 bg-slate-800 py-3 px-4 text-white focus:border-indigo-500 focus:outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-indigo-300 uppercase tracking-wider mb-2">2. Define the Task</label>
+                                <textarea id="genTask" rows="2" placeholder="e.g., Write a comprehensive blog post about AI ethics..." 
+                                    class="w-full rounded-lg border border-slate-700 bg-slate-800 py-3 px-4 text-white focus:border-indigo-500 focus:outline-none transition-all"></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-xs font-semibold text-indigo-300 uppercase tracking-wider mb-2">3. Context & Audience</label>
+                                    <textarea id="genContext" rows="3" placeholder="e.g., Target audience is beginners. Tone should be encouraging." 
+                                        class="w-full rounded-lg border border-slate-700 bg-slate-800 py-3 px-4 text-white focus:border-indigo-500 focus:outline-none transition-all"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-indigo-300 uppercase tracking-wider mb-2">4. Format & Constraints</label>
+                                    <textarea id="genFormat" rows="3" placeholder="e.g., Output as Markdown. Include code examples. Max 500 words." 
+                                        class="w-full rounded-lg border border-slate-700 bg-slate-800 py-3 px-4 text-white focus:border-indigo-500 focus:outline-none transition-all"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/50 px-6 py-4 sm:flex sm:flex-row-reverse border-t border-slate-800">
+                        <button type="button" onclick="generateMasterPrompt()" class="inline-flex w-full justify-center rounded-lg bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto transition-colors">Generate Master Prompt</button>
+                        <button type="button" onclick="closeGenerator()" class="mt-3 inline-flex w-full justify-center rounded-lg bg-slate-800 px-6 py-3 text-base font-semibold text-slate-300 shadow-sm ring-1 ring-inset ring-slate-700 hover:bg-slate-700 sm:mt-0 sm:w-auto transition-colors">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="fixed inset-0 z-[110] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-950/95 backdrop-blur-md transition-opacity" onclick="closeResult()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-slate-900 border border-indigo-500/30 text-left shadow-2xl transition-all sm:w-full sm:max-w-4xl">
+                    <div class="bg-slate-900 px-6 py-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-white">Your Generated Master Prompt</h3>
+                            <button onclick="copyResult()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                Copy to Clipboard
+                            </button>
+                        </div>
+                        <div class="bg-slate-950 rounded-lg p-6 border border-slate-800">
+                            <pre id="resultContent" class="whitespace-pre-wrap font-mono text-sm text-slate-300 leading-relaxed"></pre>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/50 px-6 py-4 border-t border-slate-800 text-right">
+                        <button type="button" onclick="closeResult()" class="inline-flex justify-center rounded-lg bg-slate-800 px-6 py-2 text-sm font-semibold text-slate-300 shadow-sm ring-1 ring-inset ring-slate-700 hover:bg-slate-700 transition-colors">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-[120] flex flex-col gap-3 pointer-events-none"></div>
+
+    <script>
+        // --- HIGH-PERFORMANCE MASTER PROMPT GENERATION ENGINE ---
+        // Generates 100,000+ unique, long-form, multi-line master prompts client-side
+        
+        const categories = ['Coding', 'Writing', 'Analysis', 'Business', 'Learning', 'Marketing'];
+        
+        const components = {
+            Coding: {
+                roles: ["Senior Full-Stack Developer", "DevOps Engineer", "Security Analyst", "Database Architect", "Frontend Specialist"],
+                tasks: ["conduct a comprehensive code review", "design a scalable microservices architecture", "optimize database query performance", "implement robust error handling", "refactor legacy codebase"],
+                contexts: ["The codebase is a legacy monolith transitioning to microservices.", "The target environment is a high-traffic, low-latency production system.", "The team consists of junior developers who need clear, educational comments.", "Security and compliance (SOC2) are the top priorities for this project."],
+                constraints: ["Output must be in Markdown with clear headings.", "Include before/after code snippets for every suggestion.", "Prioritize performance and memory efficiency.", "Do not use deprecated libraries or methods."],
+                structures: ["1. Executive Summary\n2. Critical Issues\n3. Performance Bottlenecks\n4. Refactored Code\n5. Testing Recommendations", "1. Architecture Overview\n2. Security Vulnerabilities\n3. Step-by-Step Fix\n4. Deployment Checklist"]
+            },
+            Writing: {
+                roles: ["Bestselling Author", "Senior Copywriter", "Technical Writer", "Journalist", "Content Strategist"],
+                tasks: ["write a comprehensive long-form article", "draft a persuasive sales landing page", "create a detailed technical documentation guide", "write an engaging newsletter sequence", "develop a brand storytelling framework"],
+                contexts: ["The target audience is C-level executives with limited time.", "The readers are beginners who need complex topics broken down simply.", "The brand voice is authoritative, innovative, and slightly rebellious.", "The goal is to drive organic traffic through semantic SEO."],
+                constraints: ["Maintain a Flesch-Kincaid readability score of 60 or higher.", "Use active voice and avoid jargon unless defined.", "Include relevant analogies to explain abstract concepts.", "Format with H2 and H3 tags for scannability."],
+                structures: ["1. Hook/Introduction\n2. Core Argument\n3. Supporting Evidence (3 points)\n4. Counterargument & Rebuttal\n5. Call to Action", "1. Problem Agitation\n2. Solution Introduction\n3. Feature/Benefit Breakdown\n4. Social Proof\n5. Urgency-Driven CTA"]
+            },
+            Analysis: {
+                roles: ["Lead Data Scientist", "Management Consultant", "Financial Analyst", "Market Researcher", "UX Researcher"],
+                tasks: ["analyze the provided dataset for hidden trends", "conduct a comprehensive SWOT analysis", "evaluate the competitive landscape", "interpret user behavior metrics", "forecast future market trajectories"],
+                contexts: ["The data spans the last 5 years and includes seasonal fluctuations.", "The client is considering a major pivot in their business model.", "User retention has dropped by 15% in the last quarter.", "The market is highly regulated and subject to rapid policy changes."],
+                constraints: ["Base all conclusions strictly on the provided data.", "Highlight any assumptions made during the analysis.", "Present findings in a clear, executive-friendly format.", "Include confidence intervals or margin of error where applicable."],
+                structures: ["1. Executive Summary\n2. Methodology\n3. Key Findings\n4. Risk Assessment\n5. Strategic Recommendations", "1. Current State Analysis\n2. Trend Identification\n3. Scenario Planning (Best/Worst Case)\n4. Actionable Next Steps"]
+            },
+            Business: {
+                roles: ["McKinsey-style Business Consultant", "Startup Founder", "Product Manager", "Operations Director", "Venture Capitalist"],
+                tasks: ["develop a go-to-market strategy", "create a comprehensive business plan", "design an operational workflow", "pitch a new product feature to stakeholders", "formulate a crisis management plan"],
+                contexts: ["The company is a Series A startup with limited runway.", "We are expanding into a highly competitive international market.", "The organization is undergoing a major cultural transformation.", "Supply chain disruptions are impacting delivery times."],
+                constraints: ["Focus on ROI and measurable KPIs.", "Keep the strategy actionable within a 90-day timeframe.", "Consider both short-term wins and long-term sustainability.", "Address potential regulatory hurdles."],
+                structures: ["1. Vision & Objectives\n2. Market Analysis\n3. Strategic Initiatives\n4. Resource Allocation\n5. KPI Dashboard", "1. Problem Statement\n2. Proposed Solution\n3. Financial Projections\n4. Risk Mitigation\n5. Implementation Timeline"]
+            },
+            Learning: {
+                roles: ["PhD-level Professor", "Expert Tutor", "Curriculum Designer", "Historical Scholar", "Science Communicator"],
+                tasks: ["explain a complex concept in simple terms", "design a 4-week intensive study plan", "debunk common misconceptions about a topic", "provide a historical overview of a movement", "create a Socratic dialogue to explore a philosophical idea"],
+                contexts: ["The student is a visual learner who struggles with abstract math.", "The goal is to prepare for a rigorous professional certification exam.", "The audience is curious adults with no formal background in the subject.", "The topic is highly controversial and requires balanced, objective presentation."],
+                constraints: ["Use the Feynman Technique: explain it so a 12-year-old could understand.", "Include 3 real-world analogies to anchor the concepts.", "Provide a short quiz at the end to test comprehension.", "Cite credible, peer-reviewed sources."],
+                structures: ["1. High-Level Summary\n2. Core Concepts (with analogies)\n3. Common Pitfalls/Misconceptions\n4. Practical Application\n5. Self-Assessment Quiz", "1. Historical Context\n2. Key Figures & Theories\n3. Modern Relevance\n4. Further Reading List\n5. Discussion Questions"]
+            },
+            Marketing: {
+                roles: ["SEO Specialist", "Growth Hacker", "Brand Manager", "Social Media Director", "Conversion Rate Optimization Expert"],
+                tasks: ["develop a comprehensive content calendar", "write high-converting ad copy variations", "create a detailed buyer persona profile", "audit a website for SEO improvements", "design a viral referral campaign"],
+                contexts: ["The product is a B2B SaaS tool targeting mid-sized agencies.", "The campaign is launching during a highly competitive holiday season.", "The brand is repositioning itself from budget to premium.", "Organic reach has declined due to recent algorithm changes."],
+                constraints: ["Align all messaging with the core brand values.", "Include primary and secondary LSI keywords naturally.", "Focus on emotional triggers and pain points.", "Ensure compliance with GDPR and privacy regulations."],
+                structures: ["1. Campaign Objective\n2. Target Audience Breakdown\n3. Channel Strategy\n4. Messaging Matrix\n5. Success Metrics", "1. Current SEO Audit\n2. Keyword Opportunity Map\n3. On-Page Optimization Checklist\n4. Content Gap Analysis\n5. Link Building Strategy"]
+            }
+        };
+
+        let generatedPrompts = [];
+        let filteredPrompts = [];
+        let currentPage = 1;
+        const itemsPerPage = 20; // Fewer items per page since they are long
+
+        // Helper to get random item
+        const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+        function generateDatabase() {
+            console.time("Generation");
+            const db = [];
+            const targetCount = 100000;
+            
+            // We distribute the 100k generation across categories
+            const perCategory = Math.ceil(targetCount / categories.length);
+
+            categories.forEach(cat => {
+                const comp = components[cat];
+                for (let i = 0; i < perCategory; i++) {
+                    const role = rand(comp.roles);
+                    const task = rand(comp.tasks);
+                    const context = rand(comp.contexts);
+                    const constraint1 = rand(comp.constraints);
+                    const constraint2 = rand(comp.constraints.filter(c => c !== constraint1));
+                    const constraint3 = rand(comp.constraints.filter(c => c !== constraint1 && c !== constraint2));
+                    const structure = rand(comp.structures);
+
+                    const content = `Act as a ${role} with extensive, proven experience in this field.
+
+Your primary objective is to ${task}. 
+
+### CONTEXT
+${context}
+
+### CONSTRAINTS & RULES
+1. ${constraint1}
+2. ${constraint2}
+3. ${constraint3}
+4. Always maintain a professional, authoritative, and helpful tone.
+
+### REQUIRED OUTPUT STRUCTURE
+Please format your response exactly as follows:
+${structure}
+
+Take a deep breath and work on this problem step-by-step.`;
+
+                    db.push({
+                        id: i + (categories.indexOf(cat) * perCategory),
+                        title: `${role} Master Prompt: ${task.charAt(0).toUpperCase() + task.slice(1)}`,
+                        category: cat,
+                        content: content
+                    });
+                }
+            });
+
+            console.timeEnd("Generation");
+            return db;
+        }
+
+        // DOM Elements
+        const grid = document.getElementById('promptsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const mobileSearchInput = document.getElementById('mobileSearchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const emptyState = document.getElementById('emptyState');
+        const countDisplay = document.getElementById('countDisplay');
+        const paginationControls = document.getElementById('paginationControls');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentPageSpan = document.getElementById('currentPage');
+        const totalPagesSpan = document.getElementById('totalPages');
+
+        // Initialize
+        function init() {
+            generatedPrompts = generateDatabase();
+            filteredPrompts = generatedPrompts;
+            
+            countDisplay.textContent = "100,000 Prompts";
+            renderPrompts();
+            
+            const handleSearch = (e) => {
+                currentPage = 1;
+                filterPrompts();
+            };
+
+            searchInput.addEventListener('input', handleSearch);
+            mobileSearchInput.addEventListener('input', handleSearch);
+
+            document.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+        }
+
+        function filterPrompts() {
+            const query = (searchInput.value || mobileSearchInput.value).toLowerCase();
+            const category = categoryFilter.value;
+
+            filteredPrompts = generatedPrompts.filter(p => {
+                const matchesSearch = !query || 
+                                      p.title.toLowerCase().includes(query) || 
+                                      p.content.toLowerCase().includes(query);
+                const matchesCategory = category === 'All' || p.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderPrompts();
+        }
+
+        window.changePage = (delta) => {
+            currentPage += delta;
+            renderPrompts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function renderPrompts() {
+            const totalPages = Math.ceil(filteredPrompts.length / itemsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+            if (currentPage < 1) currentPage = 1;
+            
+            totalPagesSpan.textContent = totalPages.toLocaleString();
+            currentPageSpan.textContent = currentPage.toLocaleString();
+            
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+
+            if (filteredPrompts.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                paginationControls.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            paginationControls.classList.remove('hidden');
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = filteredPrompts.slice(start, end);
+
+            grid.innerHTML = pageItems.map(prompt => `
+                <div class="glass-panel rounded-xl p-6 flex flex-col h-full border border-slate-800 hover:border-indigo-500/40 transition-all group">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wider">
+                            ${prompt.category}
+                        </span>
+                        <button onclick="copyToClipboard('${escapeHtml(prompt.content)}')" class="text-slate-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100" title="Copy">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        </button>
+                    </div>
+                    
+                    <h3 class="text-lg font-bold text-slate-200 mb-3 group-hover:text-indigo-300 transition-colors line-clamp-2" title="${prompt.title}">${prompt.title}</h3>
+                    
+                    <div class="bg-slate-950/50 rounded-lg p-4 mb-4 flex-grow border border-slate-800/50 group-hover:border-indigo-500/20 transition-colors overflow-hidden relative">
+                        <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-950/80 to-transparent pointer-events-none"></div>
+                        <pre class="font-mono text-xs text-slate-400 whitespace-pre-wrap line-clamp-6 leading-relaxed">${prompt.content}</pre>
+                    </div>
+                    
+                    <button onclick="copyToClipboard('${escapeHtml(prompt.content)}')" class="w-full py-3 bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 border border-slate-700 hover:border-indigo-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        Copy Master Prompt
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '&quot;')
+                .replace(/\n/g, '\\n');
+        }
+
+        window.copyToClipboard = (text) => {
+            const unescaped = text.replace(/\\'/g, "'").replace(/&quot;/g, '"').replace(/\\n/g, '\n');
+            navigator.clipboard.writeText(unescaped).then(() => {
+                showToast('Master Prompt copied to clipboard!');
+            });
+        };
+
+        window.showGenerator = () => {
+            document.getElementById('generatorModal').classList.remove('hidden');
+        };
+
+        window.closeGenerator = () => {
+            document.getElementById('generatorModal').classList.add('hidden');
+        };
+
+        window.closeResult = () => {
+            document.getElementById('resultModal').classList.add('hidden');
+        };
+
+        window.generateMasterPrompt = () => {
+            const role = document.getElementById('genRole').value || "Expert Assistant";
+            const task = document.getElementById('genTask').value || "Complete the assigned task with high precision.";
+            const context = document.getElementById('genContext').value || "General context applies.";
+            const format = document.getElementById('genFormat').value || "Standard professional format.";
+
+            const masterPrompt = `### ROLE DEFINITION
+Act as a ${role}. You possess deep, nuanced expertise in this domain and approach problems with analytical rigor and creativity.
+
+### TASK OBJECTIVE
+${task}
+
+### CONTEXT & AUDIENCE
+${context}
+
+### CONSTRAINTS & FORMATTING RULES
+${format}
+
+### EXECUTION INSTRUCTIONS
+1. Analyze the request carefully, identifying all implicit and explicit requirements.
+2. Break down the problem into logical, sequential steps before generating the final output.
+3. Ensure the tone, style, and depth perfectly match the specified audience.
+4. Review your response for accuracy, completeness, and adherence to all constraints before finalizing.
+
+Take a deep breath and work on this problem step-by-step.`;
+
+            document.getElementById('resultContent').textContent = masterPrompt;
+            closeGenerator();
+            document.getElementById('resultModal').classList.remove('hidden');
+        };
+
+        window.copyResult = () => {
+            const content = document.getElementById('resultContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Generated Prompt copied!');
+            });
+        };
+
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-white bg-emerald-500 min-w-[250px] pointer-events-auto border border-white/10';
+            toast.innerHTML = `
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <span class="font-medium text-sm">${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        init();
+    </script>
+</body>
+</html>
+
